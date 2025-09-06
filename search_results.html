@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Search Results</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Sponsor Username</th>
+                    <th>Sponsor Email</th>
+                    <th>Campaign Name</th>
+                    <th>Campaign Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sponsor, campaign in sponsors %}
+                <tr>
+                    <td>{{ sponsor.username }}</td>
+                    <td>{{ sponsor.email }}</td>
+                    <td>{{ campaign.name }}</td>
+                    <td>{{ campaign.description }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

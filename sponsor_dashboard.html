@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsor Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">IESCP</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="mx-auto w-100">
+                <form action="{{ url_for('search_influencers') }}" method="GET" class="form-inline justify-content-center">
+                    <input type="text" name="search_query" class="form-control mr-2" placeholder="Search influencers...">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                <div class="alert alert-{{ messages[0][0] }} alert-dismissible fade show" role="alert">
+                    {{ messages[0][1] }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <h1 class="mb-4">Welcome, {{ current_user.username }}!</h1>
+
+        {% if not influencers %}
+            <div class="mb-4">
+                <h2>Your Campaigns</h2>
+                <a href="{{ url_for('create_campaign') }}" class="btn btn-primary">Create New Campaign</a>
+            </div>
+
+            <div class="row">
+                {% for campaign in campaigns %}
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ campaign.name }}</h5>
+                                <p class="card-text">{{ campaign.description }}</p>
+                                <p class="card-text"><strong>Budget:</strong> ${{ campaign.budget }}</p>
+                                <p class="card-text"><strong>Start Date:</strong> {{ campaign.start_date }}</p>
+                                <p class="card-text"><strong>End Date:</strong> {{ campaign.end_date }}</p>
+                                <p class="card-text"><strong>Visibility:</strong> {{ campaign.visibility }}</p>
+                                <a href="{{ url_for('edit_campaign', campaign_id=campaign.id) }}" class="btn btn-warning">Edit</a>
+                                <form method="POST" action="{{ url_for('delete_campaign', campaign_id=campaign.id) }}" class="d-inline">
+                                    
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if influencers %}
+            <div class="mt-4">
+                <h2>Search Results</h2>
+                <div class="row">
+                    {% for influencer in influencers %}
+                        <div class="col-md-4">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ influencer.username }}</h5>
+                                    <p class="card-text">{{ influencer.email }}</p>
+                                    {% if campaigns %}
+                                        <form method="post" action="{{ url_for('send_ad_request', influencer_id=influencer.id) }}">
+                                            <select name="campaign_id" class="form-control mb-2" required>
+                                                <option value="">Select Campaign</option>
+                                                {% for campaign in campaigns %}
+                                                    <option value="{{ campaign.id }}">{{ campaign.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <textarea name="requirements" class="form-control mb-2" placeholder="Requirements" required></textarea>
+                                            <input type="number" step="0.01" name="payment_amount" class="form-control mb-2" placeholder="Payment Amount" required>
+                                            <textarea name="messages" class="form-control mb-2" placeholder="Messages"></textarea>
+                                            <input type="submit" value="Send Ad Request" class="btn btn-primary">
+                                        </form>
+                                    {% else %}
+                                        <p>No campaigns available.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+
+        <div class="mt-5">
+            <h2>Ad Requests</h2>
+            {% if ad_requests %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Influencer</th>
+                            <th>Campaign</th>
+                            <th>Messages</th>
+                            <th>Requirements</th>
+                            <th>Payment Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in ad_requests %}
+                            <tr>
+                                <td>{{ request.id }}</td>
+                                <td>{{ request.influencer_name }}</td>
+                                <td>{{ request.campaign_name }}</td>
+                                <td>{{ request.messages }}</td>
+                                <td>{{ request.requirements }}</td>
+                                <td>${{ request.payment_amount }}</td>
+                                <td>{{ request.status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No ad requests at the moment.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

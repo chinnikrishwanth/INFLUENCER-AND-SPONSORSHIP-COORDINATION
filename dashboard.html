@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard</h1>
+
+        {% if current_user.role == 'admin' %}
+            <h2>All Users</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h2>All Campaigns</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Budget</th>
+                        <th>Sponsor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for campaign in campaigns %}
+                        <tr>
+                            <td>{{ campaign.id }}</td>
+                            <td>{{ campaign.name }}</td>
+                            <td>{{ campaign.description }}</td>
+                            <td>{{ campaign.start_date }}</td>
+                            <td>{{ campaign.end_date }}</td>
+                            <td>{{ campaign.budget }}</td>
+                            <td>{{ campaign.sponsor.username }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <h2>All Ad Requests</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Campaign</th>
+                        <th>Influencer</th>
+                        <th>Requirements</th>
+                        <th>Payment Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ad_request in ad_requests %}
+                        <tr>
+                            <td>{{ ad_request.id }}</td>
+                            <td>{{ ad_request.campaign.name }}</td>
+                            <td>{{ ad_request.influencer.username }}</td>
+                            <td>{{ ad_request.requirements }}</td>
+                            <td>{{ ad_request.payment_amount }}</td>
+                            <td>{{ ad_request.status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        
+            
+
+        {% elif current_user.role == 'influencer' %}
+            <h2>Your Ad Requests</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Campaign</th>
+                        <th>Messages</th>
+                        <th>Requirements</th>
+                        <th>Payment Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ad_request in ad_requests %}
+                        <tr>
+                            <td>{{ ad_request.id }}</td>
+                            <td>{{ ad_request.campaign.name }}</td>
+                            <td>{{ ad_request.messages }}</td>
+                            <td>{{ ad_request.requirements }}</td>
+                            <td>{{ ad_request.payment_amount }}</td>
+                            <td>{{ ad_request.status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        {% endif %}
+    </div>
+</body>
+</html>
+
